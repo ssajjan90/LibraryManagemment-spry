@@ -11,6 +11,17 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Distributed token-bucket limiter backed by Redis.
+ *
+ * <p>How it works:
+ * Each user has a Redis hash bucket with current tokens and last refill time.
+ * A Lua script runs atomically in Redis for every request: it refills tokens
+ * based on elapsed time, checks whether at least one token is available, and
+ * then consumes one token when allowed. This guarantees correctness across
+ * multiple application instances because the refill + consume logic executes
+ * as a single atomic Redis operation.</p>
+ */
 @Component
 @ConditionalOnProperty(name = "wishlist.rate-limiter.strategy", havingValue = "redis-token-bucket")
 public class RedisTokenBucketWishlistRateLimiter implements WishlistRateLimiter {

@@ -8,6 +8,16 @@ import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Fixed-window limiter backed by in-memory state.
+ *
+ * <p>How it works:
+ * For each user we keep a window start timestamp and request count.
+ * If the request arrives after 60 seconds from the stored window start,
+ * we open a new window and reset count to 1. Otherwise, we increment the
+ * count and reject once the count would exceed 10 requests in the current
+ * minute window.</p>
+ */
 @Component
 @ConditionalOnProperty(name = "wishlist.rate-limiter.strategy", havingValue = "fixed", matchIfMissing = true)
 public class FixedWindowWishlistRateLimiter implements WishlistRateLimiter {

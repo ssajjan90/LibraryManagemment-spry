@@ -10,6 +10,15 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Sliding-window limiter backed by in-memory state.
+ *
+ * <p>How it works:
+ * For each user we store timestamps of recent requests. On every new request,
+ * timestamps older than 60 seconds are evicted. If fewer than 10 timestamps
+ * remain, the current request timestamp is appended and the request is allowed.
+ * If 10 timestamps are still inside the last 60 seconds, the request is rejected.</p>
+ */
 @Component
 @ConditionalOnProperty(name = "wishlist.rate-limiter.strategy", havingValue = "sliding")
 public class SlidingWindowWishlistRateLimiter implements WishlistRateLimiter {
