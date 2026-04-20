@@ -26,10 +26,13 @@ public class WishlistServiceImpl implements WishlistService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final EntityMapper mapper;
+    private final WishlistRateLimiter wishlistRateLimiter;
 
     @Override
     @Transactional
     public WishlistResponse create(WishlistCreateRequest request) {
+        wishlistRateLimiter.validateRequest(request.getUserId());
+
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.getUserId()));
 

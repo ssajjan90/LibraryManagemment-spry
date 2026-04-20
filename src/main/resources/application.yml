@@ -25,3 +25,9 @@ logging:
   level:
     root: INFO
     com.example.library: INFO
+
+
+wishlist:
+  rate-limiter:
+    # fixed | sliding | redis-token-bucket
+    strategy: fixed
